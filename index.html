@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>YouTube MP3 Downloader</title>
+</head>
+<body>
+    <h1>🎵 YouTube से MP3 (320 kbps)</h1>
+    <p>YouTube Channel URL डालें (जैसे https://www.youtube.com/@channelname/videos)</p>
+    <input type="text" id="channelUrl" placeholder="YouTube Channel URL" size="50">
+    <button onclick="getVideos()">📥 वीडियो लोड करें</button>
+    <div id="videoList"></div>
+
+    <script>
+        function getVideos() {
+            const url = document.getElementById('channelUrl').value;
+            if (!url) return alert('URL डालें!');
+            document.getElementById('videoList').innerHTML = '⏳ लोड हो रहा है...';
+
+            fetch(`/.netlify/functions/get-videos?url=${encodeURIComponent(url)}`)
+                .then(res => res.json())
+                .then(data => {
+                    let html = '';
+                    data.forEach(v => {
+                        html += `<div style="border:1px solid #ccc; margin:10px; padding:10px;">
+                            <img src="${v.thumbnail}" width="150">
+                            <strong>${v.title}</strong><br>
+                            <button onclick="downloadMP3('${v.id}')">⬇️ MP3 320kbps</button>
+                        </div>`;
+                    });
+                    document.getElementById('videoList').innerHTML = html;
+                })
+                .catch(err => {
+                    document.getElementById('videoList').innerHTML = '❌ Error: ' + err;
+                });
+        }
+
+        function downloadMP3(id) {
+            alert('डाउनलोड शुरू: ' + id);
+            window.open(`/.netlify/functions/download?videoId=${id}`);
+        }
+    </script>
+</body>
+</html>
