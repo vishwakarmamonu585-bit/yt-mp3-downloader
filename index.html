@@ -4,45 +4,47 @@
     <title>YouTube MP3 Downloader</title>
     <style>
         body { font-family: Arial; max-width: 700px; margin: auto; padding: 20px; text-align: center; }
-        input { padding: 12px; font-size: 16px; width: 80%; margin: 10px 0; border-radius: 30px; border: 2px solid #ddd; }
-        button { padding: 12px 30px; font-size: 16px; background: #25D366; color: white; border: none; border-radius: 30px; cursor: pointer; }
-        .info { background: #f0f0f0; padding: 15px; border-radius: 12px; margin-top: 20px; }
-        .link-box { background: #fff; border: 2px dashed #25D366; padding: 15px; border-radius: 12px; margin: 20px 0; }
+        input, button { padding: 12px; font-size: 16px; margin: 8px 0; }
+        input { width: 80%; border-radius: 30px; border: 2px solid #ddd; }
+        button { background: #25D366; color: white; border: none; border-radius: 30px; cursor: pointer; padding: 12px 30px; }
+        #result { margin-top: 20px; padding: 15px; background: #f0f0f0; border-radius: 12px; }
+        #result a { font-size: 18px; color: #25D366; word-break: break-all; }
+        .info { background: #fff3cd; padding: 15px; border-radius: 12px; margin-top: 20px; }
     </style>
 </head>
 <body>
     <h1>🎵 YouTube MP3 Downloader</h1>
     <p>कोई भी YouTube Video URL डालें</p>
     <input type="text" id="urlInput" placeholder="https://youtube.com/watch?v=STvZdmY70qY">
-    <br><br>
-    <button onclick="downloadMP3()">⬇️ MP3 320kbps डाउनलोड करें</button>
+    <br>
+    <button onclick="getMP3()">⬇️ MP3 320kbps डाउनलोड करें</button>
 
-    <div class="link-box" id="resultBox" style="display:none;">
+    <div id="result" style="display:none;">
         <h3>✅ आपका MP3 लिंक तैयार है</h3>
-        <a id="downloadLink" href="#" target="_blank" style="font-size:20px;">👉 यहाँ क्लिक करें और डाउनलोड करें</a>
+        <a id="mp3Link" href="#" target="_blank">👉 यहाँ क्लिक करें और MP3 डाउनलोड करें</a>
         <p style="font-size:12px; color:#888;">(लिंक पर क्लिक करने के बाद YouTube खुलेगा – वहाँ से MP3 डाउनलोड करें)</p>
     </div>
 
     <div class="info">
-        <p>⚠️ <b>YouTube ने Direct Download को ब्लॉक कर दिया है</b> – इसलिए यह लिंक आपको YouTube पर ले जाएगा</p>
-        <p>👉 वहाँ से <b>"Save As"</b> करें या <b>किसी भी YouTube Downloader</b> का उपयोग करें</p>
-        <p>✅ <b>सुझाव:</b> <a href="https://www.y2mate.com" target="_blank">Y2Mate</a> या <a href="https://www.ytmp3.cc" target="_blank">YTMP3</a> का उपयोग करें</p>
+        <p>⚠️ YouTube ने Direct Download को ब्लॉक कर दिया है – इसलिए यह लिंक आपको YouTube वीडियो पर ले जाएगा</p>
+        <p>✅ <b>वहाँ से "Save As"</b> करें या <b>किसी भी YouTube Downloader</b> का उपयोग करें</p>
+        <p>👉 <b>सुझाव:</b> <a href="https://www.y2mate.com" target="_blank">Y2Mate</a> या <a href="https://www.ytmp3.cc" target="_blank">YTMP3</a> का उपयोग करें</p>
     </div>
 
     <script>
-        function downloadMP3() {
+        function getMP3() {
             const url = document.getElementById('urlInput').value;
             if (!url) return alert('URL डालें!');
 
             const videoMatch = url.match(/[?&]v=([^&]+)/);
-            if (!videoMatch) return alert('सही YouTube URL डालें');
+            if (!videoMatch) return alert('सही YouTube URL डालें (जैसे ...?v=abc123)');
 
             const videoId = videoMatch[1];
             const youtubeLink = `https://www.youtube.com/watch?v=${videoId}`;
 
             // लिंक दिखाएँ
-            document.getElementById('downloadLink').href = youtubeLink;
-            document.getElementById('resultBox').style.display = 'block';
+            document.getElementById('mp3Link').href = youtubeLink;
+            document.getElementById('result').style.display = 'block';
         }
     </script>
 </body>
