@@ -7,7 +7,9 @@ exports.handler = async (event) => {
     try {
         const url = `https://www.youtube.com/watch?v=${videoId}`;
         const info = await ytdl.getInfo(url);
-        const audioFormat = ytdl.chooseFormat(info.formats, { 
+        
+        // सबसे अच्छा ऑडियो फॉर्मेट चुनें (320kbps के करीब)
+        const audioFormat = ytdl.chooseFormat(info.formats, {
             quality: 'highestaudio',
             filter: 'audioonly'
         });
@@ -16,20 +18,22 @@ exports.handler = async (event) => {
             return { statusCode: 404, body: 'ऑडियो फॉर्मेट नहीं मिला' };
         }
 
-        // 320kbps MP3 के लिए सीधा डाउनलोड लिंक
-        const downloadUrl = audioFormat.url;
+        // ऑडियो स्ट्रीम को बेस64 में बदलकर डाउनलोड कराएँ
+        const audioStream = ytdl(url, { format: audioFormat });
+        const chunks = [];
+        for await (const chunk of audioStream) {
+            chunks.push(chunk);
+        }
+        const buffer = Buffer.concat(chunks);
 
         return {
             statusCode: 200,
             headers: {
                 'Content-Type': 'audio/mpeg',
-                'Content-Disposition': `attachment; filename="${videoId}.mp3"`,
-                'Location': downloadUrl
+                'Content-Disposition': `attachment; filename="${videoId}.mp3"`
             },
-            body: JSON.stringify({ 
-                message: 'MP3 डाउनलोड शुरू हो रहा है', 
-                url: downloadUrl 
-            })
+            body: buffer.toString('base64'),
+            isBase64Encoded: true
         };
     } catch (err) {
         return { statusCode: 500, body: 'Error: ' + err.message };
