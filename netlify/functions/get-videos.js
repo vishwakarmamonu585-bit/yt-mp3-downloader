@@ -1,4 +1,4 @@
-const API_KEY = 'AIzaSyDQyPGZ9p-6FPmLfW1-ijIIDrZjn5cBFRU'; // आपकी API Key
+const API_KEY = 'AIzaSyDQyPGZ9p-6FPmLfW1-ijllDrZjn5cBFRU';
 
 exports.handler = async (event) => {
     const url = event.queryStringParameters.url;
