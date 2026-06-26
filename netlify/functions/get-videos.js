@@ -6,7 +6,7 @@ exports.handler = async (event) => {
 
     try {
         const channelMatch = url.match(/(?:@|channel\/)([^\/?]+)/);
-        if (!channelMatch) return { statusCode: 400, body: 'सही YouTube URL डालें' };
+        if (!channelMatch) return { statusCode: 400, body: 'सही चैनल URL डालें' };
         const channelHandle = channelMatch[1];
 
         const searchRes = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${channelHandle}&type=channel&key=${API_KEY}`);
@@ -16,16 +16,20 @@ exports.handler = async (event) => {
         }
         const channelId = searchData.items[0].snippet.channelId;
 
-        const videosRes = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${API_KEY}&channelId=${channelId}&part=snippet,id&order=date&maxResults=20`);
-        const videosData = await videosRes.json();
+        let allVideos = [];
+        let nextPageToken = '';
+        do {
+            const videosRes = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${API_KEY}&channelId=${channelId}&part=snippet,id&order=date&maxResults=50&pageToken=${nextPageToken}`);
+            const videosData = await videosRes.json();
+            allVideos = allVideos.concat(videosData.items.map(item => ({
+                id: item.id.videoId,
+                title: item.snippet.title,
+                thumbnail: item.snippet.thumbnails.medium.url
+            })));
+            nextPageToken = videosData.nextPageToken || '';
+        } while (nextPageToken);
 
-        const videos = videosData.items.map(item => ({
-            id: item.id.videoId,
-            title: item.snippet.title,
-            thumbnail: item.snippet.thumbnails.medium.url
-        }));
-
-        return { statusCode: 200, body: JSON.stringify(videos) };
+        return { statusCode: 200, body: JSON.stringify(allVideos) };
     } catch (err) {
         return { statusCode: 500, body: 'Error: ' + err.message };
     }
