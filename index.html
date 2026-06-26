@@ -4,21 +4,28 @@
     <title>YouTube MP3 Downloader</title>
     <style>
         body { font-family: Arial; max-width: 700px; margin: auto; padding: 20px; text-align: center; }
-        input, button { padding: 12px; font-size: 16px; width: 80%; margin: 8px 0; }
-        button { background: #25D366; color: white; border: none; border-radius: 30px; cursor: pointer; width: auto; padding: 12px 30px; }
+        input { padding: 12px; font-size: 16px; width: 80%; margin: 10px 0; border-radius: 30px; border: 2px solid #ddd; }
+        button { padding: 12px 30px; font-size: 16px; background: #25D366; color: white; border: none; border-radius: 30px; cursor: pointer; }
         .info { background: #f0f0f0; padding: 15px; border-radius: 12px; margin-top: 20px; }
+        .link-box { background: #fff; border: 2px dashed #25D366; padding: 15px; border-radius: 12px; margin: 20px 0; }
     </style>
 </head>
 <body>
     <h1>🎵 YouTube MP3 Downloader</h1>
     <p>कोई भी YouTube Video URL डालें</p>
-    <input type="text" id="urlInput" placeholder="https://youtube.com/watch?v=..." style="width: 90%;">
-    <br>
+    <input type="text" id="urlInput" placeholder="https://youtube.com/watch?v=STvZdmY70qY">
+    <br><br>
     <button onclick="downloadMP3()">⬇️ MP3 320kbps डाउनलोड करें</button>
 
+    <div class="link-box" id="resultBox" style="display:none;">
+        <h3>✅ आपका MP3 लिंक तैयार है</h3>
+        <a id="downloadLink" href="#" target="_blank" style="font-size:20px;">👉 यहाँ क्लिक करें और डाउनलोड करें</a>
+        <p style="font-size:12px; color:#888;">(लिंक पर क्लिक करने के बाद YouTube खुलेगा – वहाँ से MP3 डाउनलोड करें)</p>
+    </div>
+
     <div class="info">
-        <p>⚠️ यह वेबसाइट आपको <b>YouTube वीडियो पेज</b> पर रीडायरेक्ट करेगी –</p>
-        <p>वहाँ से आप <b>"Save As"</b> या <b>किसी भी YouTube Downloader</b> का उपयोग करके MP3 डाउनलोड कर सकते हैं।</p>
+        <p>⚠️ <b>YouTube ने Direct Download को ब्लॉक कर दिया है</b> – इसलिए यह लिंक आपको YouTube पर ले जाएगा</p>
+        <p>👉 वहाँ से <b>"Save As"</b> करें या <b>किसी भी YouTube Downloader</b> का उपयोग करें</p>
         <p>✅ <b>सुझाव:</b> <a href="https://www.y2mate.com" target="_blank">Y2Mate</a> या <a href="https://www.ytmp3.cc" target="_blank">YTMP3</a> का उपयोग करें</p>
     </div>
 
@@ -28,14 +35,14 @@
             if (!url) return alert('URL डालें!');
 
             const videoMatch = url.match(/[?&]v=([^&]+)/);
-            if (!videoMatch) return alert('सही YouTube URL डालें (जैसे ...?v=abc123)');
+            if (!videoMatch) return alert('सही YouTube URL डालें');
 
             const videoId = videoMatch[1];
-            // YouTube डायरेक्ट लिंक
             const youtubeLink = `https://www.youtube.com/watch?v=${videoId}`;
-            
-            // नए टैब में YouTube खोलें – वहाँ से Download करें
-            window.open(youtubeLink, '_blank');
+
+            // लिंक दिखाएँ
+            document.getElementById('downloadLink').href = youtubeLink;
+            document.getElementById('resultBox').style.display = 'block';
         }
     </script>
 </body>
