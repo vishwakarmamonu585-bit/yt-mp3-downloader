@@ -5,17 +5,33 @@ exports.handler = async (event) => {
     if (!url) return { statusCode: 400, body: 'URL नहीं मिला' };
 
     try {
+        // ✅ पहले चेक करें – क्या यह एक वीडियो का URL है?
+        const videoMatch = url.match(/[?&]v=([^&]+)/);
+        if (videoMatch) {
+            // एक वीडियो – सिर्फ उसका डेटा भेजें
+            const videoId = videoMatch[1];
+            const singleVideo = [{
+                id: videoId,
+                title: 'वीडियो डाउनलोड हो रहा है...',
+                thumbnail: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
+            }];
+            return { statusCode: 200, body: JSON.stringify(singleVideo) };
+        }
+
+        // ❌ नहीं तो चैनल हैंडल निकालें
         const channelMatch = url.match(/(?:@|channel\/)([^\/?]+)/);
-        if (!channelMatch) return { statusCode: 400, body: 'सही चैनल URL डालें' };
+        if (!channelMatch) return { statusCode: 400, body: JSON.stringify({ error: 'सही YouTube URL डालें' }) };
         const channelHandle = channelMatch[1];
 
+        // YouTube API से Channel ID प्राप्त करें
         const searchRes = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${channelHandle}&type=channel&key=${API_KEY}`);
         const searchData = await searchRes.json();
         if (!searchData.items || searchData.items.length === 0) {
-            return { statusCode: 404, body: 'Channel नहीं मिला' };
+            return { statusCode: 404, body: JSON.stringify({ error: 'Channel नहीं मिला' }) };
         }
         const channelId = searchData.items[0].snippet.channelId;
 
+        // Channel के सारे वीडियो प्राप्त करें
         let allVideos = [];
         let nextPageToken = '';
         do {
@@ -31,6 +47,6 @@ exports.handler = async (event) => {
 
         return { statusCode: 200, body: JSON.stringify(allVideos) };
     } catch (err) {
-        return { statusCode: 500, body: 'Error: ' + err.message };
+        return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
     }
 };
