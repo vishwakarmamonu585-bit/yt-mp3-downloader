@@ -3,23 +3,27 @@
 <head>
     <title>YouTube MP3 Downloader</title>
     <style>
-        body { font-family: Arial; max-width: 800px; margin: auto; padding: 20px; }
-        input, button { padding: 10px; font-size: 16px; }
-        .video { border: 1px solid #ddd; margin: 10px 0; padding: 10px; display: flex; align-items: center; gap: 15px; }
-        .video img { width: 160px; }
-        .video button { background: #25D366; color: white; border: none; padding: 8px 16px; border-radius: 30px; cursor: pointer; }
-        #pagination { text-align: center; margin: 20px 0; }
+        body { font-family: Arial; max-width: 700px; margin: auto; padding: 20px; text-align: center; }
+        input, button { padding: 12px; font-size: 16px; width: 80%; margin: 8px 0; }
+        button { background: #25D366; color: white; border: none; border-radius: 30px; cursor: pointer; width: auto; padding: 12px 30px; }
+        .info { background: #f0f0f0; padding: 15px; border-radius: 12px; margin-top: 20px; }
     </style>
 </head>
 <body>
-    <h1>🎵 YouTube MP3 (320 kbps)</h1>
-    <p>👉 <b>एक वीडियो</b> का URL डालें (जैसे `https://youtube.com/watch?v=abc123`)</p>
-    <input type="text" id="urlInput" placeholder="YouTube URL" size="50">
-    <button onclick="downloadDirect()">📥 MP3 डाउनलोड करें</button>
-    <div id="videoList"></div>
+    <h1>🎵 YouTube MP3 Downloader</h1>
+    <p>कोई भी YouTube Video URL डालें</p>
+    <input type="text" id="urlInput" placeholder="https://youtube.com/watch?v=..." style="width: 90%;">
+    <br>
+    <button onclick="downloadMP3()">⬇️ MP3 320kbps डाउनलोड करें</button>
+
+    <div class="info">
+        <p>⚠️ यह वेबसाइट आपको <b>YouTube वीडियो पेज</b> पर रीडायरेक्ट करेगी –</p>
+        <p>वहाँ से आप <b>"Save As"</b> या <b>किसी भी YouTube Downloader</b> का उपयोग करके MP3 डाउनलोड कर सकते हैं।</p>
+        <p>✅ <b>सुझाव:</b> <a href="https://www.y2mate.com" target="_blank">Y2Mate</a> या <a href="https://www.ytmp3.cc" target="_blank">YTMP3</a> का उपयोग करें</p>
+    </div>
 
     <script>
-        function downloadDirect() {
+        function downloadMP3() {
             const url = document.getElementById('urlInput').value;
             if (!url) return alert('URL डालें!');
 
@@ -27,14 +31,11 @@
             if (!videoMatch) return alert('सही YouTube URL डालें (जैसे ...?v=abc123)');
 
             const videoId = videoMatch[1];
-            // YouTube से डायरेक्ट डाउनलोड लिंक (सबसे आसान)
-            const downloadUrl = `https://www.y2mate.com/youtube-mp3/${videoId}`;
+            // YouTube डायरेक्ट लिंक
+            const youtubeLink = `https://www.youtube.com/watch?v=${videoId}`;
             
-            // नया टैब खोलें
-            window.open(downloadUrl, '_blank');
-            
-            // या सीधा डाउनलोड शुरू करें
-            // window.location.href = downloadUrl;
+            // नए टैब में YouTube खोलें – वहाँ से Download करें
+            window.open(youtubeLink, '_blank');
         }
     </script>
 </body>
