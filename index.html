@@ -2,41 +2,39 @@
 <html>
 <head>
     <title>YouTube MP3 Downloader</title>
+    <style>
+        body { font-family: Arial; max-width: 800px; margin: auto; padding: 20px; }
+        input, button { padding: 10px; font-size: 16px; }
+        .video { border: 1px solid #ddd; margin: 10px 0; padding: 10px; display: flex; align-items: center; gap: 15px; }
+        .video img { width: 160px; }
+        .video button { background: #25D366; color: white; border: none; padding: 8px 16px; border-radius: 30px; cursor: pointer; }
+        #pagination { text-align: center; margin: 20px 0; }
+    </style>
 </head>
 <body>
-    <h1>🎵 YouTube से MP3 (320 kbps)</h1>
-    <p>YouTube Channel URL डालें (जैसे https://www.youtube.com/@channelname/videos)</p>
-    <input type="text" id="channelUrl" placeholder="YouTube Channel URL" size="50">
-    <button onclick="getVideos()">📥 वीडियो लोड करें</button>
+    <h1>🎵 YouTube MP3 (320 kbps)</h1>
+    <p>👉 <b>एक वीडियो</b> का URL डालें (जैसे `https://youtube.com/watch?v=abc123`)</p>
+    <input type="text" id="urlInput" placeholder="YouTube URL" size="50">
+    <button onclick="downloadDirect()">📥 MP3 डाउनलोड करें</button>
     <div id="videoList"></div>
 
     <script>
-        function getVideos() {
-            const url = document.getElementById('channelUrl').value;
+        function downloadDirect() {
+            const url = document.getElementById('urlInput').value;
             if (!url) return alert('URL डालें!');
-            document.getElementById('videoList').innerHTML = '⏳ लोड हो रहा है...';
 
-            fetch(`/.netlify/functions/get-videos?url=${encodeURIComponent(url)}`)
-                .then(res => res.json())
-                .then(data => {
-                    let html = '';
-                    data.forEach(v => {
-                        html += `<div style="border:1px solid #ccc; margin:10px; padding:10px;">
-                            <img src="${v.thumbnail}" width="150">
-                            <strong>${v.title}</strong><br>
-                            <button onclick="downloadMP3('${v.id}')">⬇️ MP3 320kbps</button>
-                        </div>`;
-                    });
-                    document.getElementById('videoList').innerHTML = html;
-                })
-                .catch(err => {
-                    document.getElementById('videoList').innerHTML = '❌ Error: ' + err;
-                });
-        }
+            const videoMatch = url.match(/[?&]v=([^&]+)/);
+            if (!videoMatch) return alert('सही YouTube URL डालें (जैसे ...?v=abc123)');
 
-        function downloadMP3(id) {
-            alert('डाउनलोड शुरू: ' + id);
-            window.open(`/.netlify/functions/download?videoId=${id}`);
+            const videoId = videoMatch[1];
+            // YouTube से डायरेक्ट डाउनलोड लिंक (सबसे आसान)
+            const downloadUrl = `https://www.y2mate.com/youtube-mp3/${videoId}`;
+            
+            // नया टैब खोलें
+            window.open(downloadUrl, '_blank');
+            
+            // या सीधा डाउनलोड शुरू करें
+            // window.location.href = downloadUrl;
         }
     </script>
 </body>
